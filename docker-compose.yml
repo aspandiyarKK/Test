@@ -1,0 +1,32 @@
+version: '3'
+services:
+  db:
+    image: postgres:14.1
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data
+    networks:
+      - ewallet-network
+
+  service:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      environment:
+        PG_DSN: "postgres://postgres:secret@db:5432/postgres"
+      restart: always
+      ports:
+        - "3000:3000"
+      networks:
+        - ewallet-network
+
+volumes:
+  postgres_volume:
+
+networks:
+  ewallet-network:
